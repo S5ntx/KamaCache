@@ -26,8 +26,9 @@ private:
 
 // 辅助函数：打印结果
 void printResults(const std::string& testName, int capacity, 
-                 const std::vector<int>& get_operations, 
-                 const std::vector<int>& hits) {
+                 const std::vector<int>& get_operations, // 每个缓存的 get 操作次数。
+                 const std::vector<int>& hits) {         // 每个缓存的命中次数
+    /*
     std::cout << "缓存大小: " << capacity << std::endl;
     std::cout << "LRU - 命中率: " << std::fixed << std::setprecision(2) 
               << (100.0 * hits[0] / get_operations[0]) << "%" << std::endl;
@@ -35,6 +36,17 @@ void printResults(const std::string& testName, int capacity,
               << (100.0 * hits[1] / get_operations[1]) << "%" << std::endl;
     std::cout << "ARC - 命中率: " << std::fixed << std::setprecision(2) 
               << (100.0 * hits[2] / get_operations[2]) << "%" << std::endl;
+    */
+    std::cout << "缓存大小: " << capacity << std::endl;
+    std::cout << "LRU - 命中率: " << std::fixed << std::setprecision(2) 
+             << (100.0 * hits[0] / get_operations[0]) << "%" << std::endl;
+    std::cout << "KLRU - 命中率: " << std::fixed << std::setprecision(2) 
+             << (100.0 * hits[1] / get_operations[1]) << "%" << std::endl;         
+    std::cout << "LFU - 命中率: " << std::fixed << std::setprecision(2) 
+             << (100.0 * hits[2] / get_operations[2]) << "%" << std::endl;
+    std::cout << "ARC - 命中率: " << std::fixed << std::setprecision(2) 
+             << (100.0 * hits[3] / get_operations[3]) << "%" << std::endl;
+
 }
 
 void testHotDataAccess() {
@@ -44,17 +56,27 @@ void testHotDataAccess() {
     const int OPERATIONS = 500000;  // 增加操作次数
     const int HOT_KEYS = 20;   // 增加热点数据的数量
     const int COLD_KEYS = 5000;        
+
+    const int HISTORY_CAPACITY = 100;  // 访问历史记录的容量
+    const int K = 2;  // 设定 K 值
     
     KamaCache::KLruCache<int, std::string> lru(CAPACITY);
+    KamaCache::KLruKCache<int, std::string> lruKCache(CAPACITY, HISTORY_CAPACITY, K);
     KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
     KamaCache::KArcCache<int, std::string> arc(CAPACITY);
 
     std::random_device rd;
     std::mt19937 gen(rd());
     
+    /*
     std::array<KamaCache::KICachePolicy<int, std::string>*, 3> caches = {&lru, &lfu, &arc};
     std::vector<int> hits(3, 0);
     std::vector<int> get_operations(3, 0);
+    */
+
+    std::array<KamaCache::KICachePolicy<int, std::string>*, 4> caches = {&lru, &lruKCache, &lfu, &arc};
+    std::vector<int> hits(4, 0);
+    std::vector<int> get_operations(4, 0);
 
     // 先进行一系列put操作
     for (int i = 0; i < caches.size(); ++i) {
@@ -95,6 +117,8 @@ void testLoopPattern() {
     const int CAPACITY = 50;  // 增加缓存容量
     const int LOOP_SIZE = 500;         
     const int OPERATIONS = 200000;  // 增加操作次数
+
+    /*
     
     KamaCache::KLruCache<int, std::string> lru(CAPACITY);
     KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
@@ -103,6 +127,19 @@ void testLoopPattern() {
     std::array<KamaCache::KICachePolicy<int, std::string>*, 3> caches = {&lru, &lfu, &arc};
     std::vector<int> hits(3, 0);
     std::vector<int> get_operations(3, 0);
+
+    */
+    const int HISTORY_CAPACITY = 100;  // 访问历史记录的容量
+    const int K = 2;  // 设定 K 值
+   
+    KamaCache::KLruCache<int, std::string> lru(CAPACITY);
+    KamaCache::KLruKCache<int, std::string> lruKCache(CAPACITY, HISTORY_CAPACITY, K);
+    KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
+    KamaCache::KArcCache<int, std::string> arc(CAPACITY);
+
+    std::array<KamaCache::KICachePolicy<int, std::string>*, 4> caches = {&lru, &lruKCache, &lfu, &arc};
+    std::vector<int> hits(4, 0);
+    std::vector<int> get_operations(4, 0);
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -145,15 +182,34 @@ void testWorkloadShift() {
     const int OPERATIONS = 80000;      
     const int PHASE_LENGTH = OPERATIONS / 5;
     
+    /*
+
     KamaCache::KLruCache<int, std::string> lru(CAPACITY);
     KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
     KamaCache::KArcCache<int, std::string> arc(CAPACITY);
 
     std::random_device rd;
     std::mt19937 gen(rd());
+
     std::array<KamaCache::KICachePolicy<int, std::string>*, 3> caches = {&lru, &lfu, &arc};
     std::vector<int> hits(3, 0);
     std::vector<int> get_operations(3, 0);
+
+    */
+    const int HISTORY_CAPACITY = 10;  // 访问历史记录的容量
+    const int K = 2;  // 设定 K 值
+   
+    KamaCache::KLruCache<int, std::string> lru(CAPACITY);
+    KamaCache::KLruKCache<int, std::string> lruKCache(CAPACITY, HISTORY_CAPACITY, K);
+    KamaCache::KLfuCache<int, std::string> lfu(CAPACITY);
+    KamaCache::KArcCache<int, std::string> arc(CAPACITY);
+
+    std::array<KamaCache::KICachePolicy<int, std::string>*, 4> caches = {&lru, &lruKCache, &lfu, &arc};
+    std::vector<int> hits(4, 0);
+    std::vector<int> get_operations(4, 0);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
     // 先填充一些初始数据
     for (int i = 0; i < caches.size(); ++i) {

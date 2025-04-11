@@ -1,0 +1,3 @@
+/home/stx_u/KamaCache/build/CMakeFiles/main.dir
+/home/stx_u/KamaCache/build/CMakeFiles/edit_cache.dir
+/home/stx_u/KamaCache/build/CMakeFiles/rebuild_cache.dir
